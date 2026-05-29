@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  --color-cyber-cyan: hsl(180, 100%, 50%);
+  --color-cyber-cyan-glow: rgba(0, 255, 255, 0.2);
+  --color-cyber-cyan-dark: hsl(180, 100%, 15%);
+  --color-cyber-purple: hsl(270, 100%, 60%);
+  --color-cyber-purple-glow: rgba(168, 85, 247, 0.2);
+  --color-cyber-purple-dark: hsl(270, 100%, 15%);
+  --color-cyber-red: hsl(0, 100%, 60%);
+  --color-cyber-dark: hsl(225, 25%, 5%);
+  --color-cyber-glass: rgba(6, 10, 20, 0.75);
+
+  --animate-cyber-pulse: cyber-pulse 4s infinite alternate;
+  --animate-grid-scroll: grid-scroll 20s linear infinite;
+  --animate-scanline: scanline 6s linear infinite;
+  --animate-cyber-float: float-animation 6s ease-in-out infinite;
+}
+
+:root {
+  --background: #030712;
+  --foreground: #f3f4f6;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Futuristic Scanline Effect */
+.scanline::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 9999;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(6, 10, 20, 0.8);
+  border-left: 1px solid rgba(0, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.4);
+}
+
+/* Glow Utilities */
+.neon-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.6), 0 0 20px rgba(0, 255, 255, 0.2);
+}
+.neon-glow-purple {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.2);
+}
+.neon-border-cyan {
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.15), inset 0 0 10px rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+.neon-border-purple {
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.15), inset 0 0 10px rgba(168, 85, 247, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Cyber Grid Background */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Keyframes */
+@keyframes cyber-pulse {
+  0% {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1), inset 0 0 5px rgba(0, 255, 255, 0.02);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(0, 255, 255, 0.08);
+  }
+}
+
+@keyframes grid-scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+@keyframes float-animation {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+/* Utility Animations */
+.animate-float {
+  animation: float-animation 6s ease-in-out infinite;
+}
