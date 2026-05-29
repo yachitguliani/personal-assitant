@@ -3,11 +3,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-interface CyberButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface CyberButtonProps {
   children: React.ReactNode;
   variant?: "cyan" | "purple" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   glow?: boolean;
+  className?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function CyberButton({
@@ -16,7 +20,9 @@ export function CyberButton({
   size = "md",
   glow = true,
   className = "",
-  ...props
+  type = "button",
+  disabled = false,
+  onClick,
 }: CyberButtonProps) {
   const baseStyle = "relative font-mono uppercase tracking-wider transition-all duration-300 overflow-hidden flex items-center justify-center select-none active:scale-95 disabled:opacity-50 disabled:pointer-events-none";
 
@@ -44,10 +50,12 @@ export function CyberButton({
 
   return (
     <motion.button
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
       whileHover={{ y: -1 }}
       whileTap={{ scale: 0.97 }}
       className={`${baseStyle} ${sizeStyles[size]} ${variantStyles[variant]} ${glowStyles[variant]} ${className}`}
-      {...props}
     >
       {/* Laser line flare animation */}
       <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:animate-[scanline_1.5s_ease-out_infinite]" />
