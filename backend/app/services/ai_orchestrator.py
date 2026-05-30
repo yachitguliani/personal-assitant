@@ -1,5 +1,5 @@
 import json
-from typing import AsyncGenerator, List, Dict
+from typing import AsyncGenerator, List, Dict, Any
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.services.memory_service import MemoryService

@@ -8,6 +8,7 @@ import { NeonInput } from "@/components/ui/neon-input";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { api, setAuthToken } from "@/utils/api";
+import { warmUpSpeech } from "@/lib/speech-engine";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    warmUpSpeech();
     setError("");
     setLoading(true);
 

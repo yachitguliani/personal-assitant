@@ -129,3 +129,44 @@ body {
 .animate-float {
   animation: float-animation 6s ease-in-out infinite;
 }
+
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes hologram-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+@keyframes data-stream {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(0, 255, 255, 0.25), 0 0 80px rgba(168, 85, 247, 0.1); }
+}
+
+.animate-orb-pulse {
+  animation: orb-pulse 3s ease-in-out infinite;
+}
+
+.animate-hologram {
+  animation: hologram-flicker 4s ease-in-out infinite;
+}
+
+.animate-glow-breathe {
+  animation: glow-breathe 4s ease-in-out infinite;
+}
+
+.holographic-card {
+  background: linear-gradient(135deg, rgba(0,255,255,0.03) 0%, rgba(168,85,247,0.03) 100%);
+  backdrop-filter: blur(12px);
+}

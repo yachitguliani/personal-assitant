@@ -25,7 +25,7 @@ export function SystemStatus() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/status");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:8000"}/api/status`);
         if (res.ok) {
           const data = await res.json();
           setMetrics({
