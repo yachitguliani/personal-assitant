@@ -58,3 +58,10 @@ NEURON is expanding into a **Life Operating System** with predictive burnout det
 - [`CURSOR_LIFE_OS_PROMPT.md`](../CURSOR_LIFE_OS_PROMPT.md) — AI-assisted implementation prompt
 
 **Branch naming:** `feature/life-os-XX-short-name` (e.g. `feature/life-os-09-health-import`)
+
+### Personal Assistant Learning Track (24 issues)
+
+Learn chat, memory, voice, and AI features while contributing:
+
+- [`ASSISTANT_LEARNING.md`](../ASSISTANT_LEARNING.md) — full learning guide + GPT tips
+- [`.github/assistant-learning/README.md`](../.github/assistant-learning/README.md) — 12 easy + 12 medium issues
