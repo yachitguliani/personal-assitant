@@ -45,3 +45,16 @@ We enforce semantic commits:
 * `fix(scope): ...` (Bug resolution)
 * `docs(scope): ...` (Documentation changes)
 * `style(scope): ...` (Linters or spacing)
+
+## 🌱 Life OS Contributions
+
+NEURON is expanding into a **Life Operating System** with predictive burnout detection.
+
+> One system that treats your personal life with the same seriousness you give your startup.
+
+**Start here:**
+- [`LIFE_OS_GUIDE.md`](../LIFE_OS_GUIDE.md) — vision, mental model, implementation guide
+- [`.github/life-os/README.md`](../.github/life-os/README.md) — 16 pick-up issues by phase
+- [`CURSOR_LIFE_OS_PROMPT.md`](../CURSOR_LIFE_OS_PROMPT.md) — AI-assisted implementation prompt
+
+**Branch naming:** `feature/life-os-XX-short-name` (e.g. `feature/life-os-09-health-import`)

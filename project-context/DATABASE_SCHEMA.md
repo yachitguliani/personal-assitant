@@ -6,6 +6,9 @@ NEURON OS supports SQLAlchemy relationships, connecting tables for accounts, cha
 erDiagram
     USERS ||--o{ CONVERSATIONS : creates
     USERS ||--o{ MEMORIES : owns
+    USERS ||--o{ LIFE_METRICS : logs
+    USERS ||--o{ GOALS : sets
+    USERS ||--o{ BURNOUT_SIGNALS : tracked
     CONVERSATIONS ||--o{ MESSAGES : contains
     
     USERS {
@@ -39,6 +42,39 @@ erDiagram
         string category "semantic | episodic | procedural"
         string tags "comma-separated"
         string embedding_data "JSON floats array"
+        datetime created_at
+    }
+
+    LIFE_METRICS {
+        int id PK
+        int user_id FK
+        date log_date UNIQUE per user
+        float sleep_hours
+        int deep_work_minutes
+        int screen_time_minutes
+        int energy_level "1-10"
+        int mood "1-10"
+        datetime created_at
+    }
+
+    GOALS {
+        int id PK
+        int user_id FK
+        string title
+        string category "health | work | learning | relationships"
+        date target_date
+        int progress "0-100"
+        string status "active | completed | paused | abandoned"
+        datetime created_at
+    }
+
+    BURNOUT_SIGNALS {
+        int id PK
+        int user_id FK
+        string week_of "ISO week start YYYY-MM-DD"
+        float computed_risk_score "0-100"
+        boolean warning_triggered
+        string factors_json "JSON signal breakdown"
         datetime created_at
     }
 ```

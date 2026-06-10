@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Terminal, Activity, Hash } from "lucide-react";
+import { Terminal, Activity, Hash, Heart, BarChart3 } from "lucide-react";
 import { NeuronOsProvider, useNeuronOs } from "@/context/neuron-os-context";
 import { BootSequence } from "@/components/core/boot-sequence";
 import { AmbientParticles } from "@/components/core/ambient-particles";
@@ -19,6 +19,8 @@ import { VectorViz } from "@/components/vector-viz";
 import { GlassCard } from "@/components/ui/glass-card";
 import { getAuthToken } from "@/utils/api";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { useBurnoutRisk } from "@/hooks/use-burnout-risk";
+import Link from "next/link";
 import type { FSNode } from "@/lib/mock-filesystem";
 
 function DashboardInner() {
@@ -32,6 +34,7 @@ function DashboardInner() {
 
   const [user, setUser] = useState<{ full_name?: string } | null>(null);
   const [openedFile, setOpenedFile] = useState<FSNode | null>(null);
+  const { risk } = useBurnoutRisk();
 
   useEffect(() => {
     const token = getAuthToken();
@@ -117,6 +120,29 @@ function DashboardInner() {
                   &gt; {log}
                 </motion.div>
               ))}
+
+              <div className="mt-4 pt-3 border-t border-white/5">
+                <span className="text-[8px] font-mono uppercase tracking-widest text-white/30 mb-2 block">
+                  Life OS
+                </span>
+                <Link
+                  href="/dashboard/life"
+                  className="flex items-center gap-1.5 py-1.5 px-2 rounded text-[9px] font-mono text-cyber-purple hover:bg-cyber-purple/10 transition-all"
+                >
+                  <Heart size={10} />
+                  Life Panel
+                  {risk?.warning_triggered && (
+                    <span className="ml-auto text-cyber-red text-[8px]">⚠ {Math.round(risk.risk_score)}</span>
+                  )}
+                </Link>
+                <Link
+                  href="/dashboard/patterns"
+                  className="flex items-center gap-1.5 py-1.5 px-2 rounded text-[9px] font-mono text-cyber-cyan hover:bg-cyber-cyan/10 transition-all mt-1"
+                >
+                  <BarChart3 size={10} />
+                  Patterns
+                </Link>
+              </div>
             </div>
           )}
         </aside>

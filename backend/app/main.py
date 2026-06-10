@@ -6,7 +6,8 @@ import random
 
 from app.core.config import settings
 from app.core.database import engine, Base, get_db
-from app.api import auth, chat, memory
+from app.api import auth, chat, memory, metrics, life_goals, burnout
+from app.models import life_metrics, goals, burnout_signal  # noqa: F401 — register ORM tables
 
 # Create database tables automatically
 Base.metadata.create_all(bind=engine)
@@ -30,6 +31,9 @@ app.add_middleware(
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(chat.router, prefix=settings.API_V1_STR)
 app.include_router(memory.router, prefix=settings.API_V1_STR)
+app.include_router(metrics.router, prefix=settings.API_V1_STR)
+app.include_router(life_goals.router, prefix=settings.API_V1_STR)
+app.include_router(burnout.router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def read_root():

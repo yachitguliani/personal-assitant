@@ -66,6 +66,8 @@ export const api = {
     apiRequest(path, { ...options, method: "GET" }),
   post: (path: string, body?: any, options?: RequestOptions) =>
     apiRequest(path, { ...options, method: "POST", json: body }),
+  patch: (path: string, body?: any, options?: RequestOptions) =>
+    apiRequest(path, { ...options, method: "PATCH", json: body }),
   delete: (path: string, options?: RequestOptions) =>
     apiRequest(path, { ...options, method: "DELETE" }),
   
@@ -111,4 +113,65 @@ export const api = {
       if (onError) onError(err);
     }
   },
+};
+
+// ─── Life OS Types & API ───────────────────────────────────────────────────
+
+export interface LifeMetric {
+  id: number;
+  log_date: string;
+  sleep_hours?: number;
+  deep_work_minutes?: number;
+  screen_time_minutes?: number;
+  energy_level?: number;
+  mood?: number;
+}
+
+export interface Goal {
+  id: number;
+  title: string;
+  category: string;
+  target_date?: string | null;
+  progress: number;
+  status: string;
+  created_at: string;
+}
+
+export interface BurnoutRiskScore {
+  risk_score: number;
+  warning_triggered: boolean;
+  threshold: number;
+  week_of: string;
+  factors: Record<string, unknown>;
+  days_analyzed: number;
+}
+
+export interface WeeklyReport {
+  current: BurnoutRiskScore;
+  history: Array<{
+    week_of: string;
+    risk_score: number;
+    warning_triggered: boolean;
+    top_factor?: string;
+  }>;
+  recommendation: string;
+}
+
+export const lifeOsApi = {
+  logMetric: (data: Partial<Omit<LifeMetric, "id" | "log_date">> & { log_date?: string }) =>
+    api.post("/metrics/log", data),
+  getMetricHistory: (days = 7) =>
+    api.get(`/metrics/history?days=${days}`) as Promise<LifeMetric[]>,
+  getMetricSummary: (days = 7) =>
+    api.get(`/metrics/summary?days=${days}`),
+  listGoals: () => api.get("/goals") as Promise<Goal[]>,
+  createGoal: (data: { title: string; category: string; target_date?: string; progress?: number }) =>
+    api.post("/goals", data) as Promise<Goal>,
+  updateGoal: (id: number, data: Partial<Goal>) =>
+    api.patch(`/goals/${id}`, data) as Promise<Goal>,
+  checkinGoal: (id: number, data: { progress: number; note?: string }) =>
+    api.post(`/goals/${id}/checkin`, data) as Promise<Goal>,
+  deleteGoal: (id: number) => api.delete(`/goals/${id}`),
+  getRiskScore: () => api.get("/burnout/risk-score") as Promise<BurnoutRiskScore>,
+  getWeeklyReport: () => api.get("/burnout/weekly-report") as Promise<WeeklyReport>,
 };
