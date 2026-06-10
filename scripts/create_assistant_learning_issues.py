@@ -105,9 +105,14 @@ def extract_title(body: str) -> str:
 
 
 def ensure_milestone(title: str, description: str) -> None:
-    r = gh("api", f"repos/{REPO}/milestones", "-f", f"title={title}", "-f", f"description={description}", "-f", "state=open")
-    if r.returncode != 0:
-        print(f"  milestone may exist: {r.stderr.strip()}")
+    r = subprocess.run(
+        ["gh", "api", f"repos/{REPO}/milestones",
+         "-f", f"title={title}", "-f", f"description={description}", "-f", "state=open"],
+        capture_output=True, text=True,
+        env={k: v for k, v in os.environ.items() if k != "GITHUB_TOKEN"},
+    )
+    if r.returncode != 0 and "already exists" not in r.stderr.lower():
+        print(f"  milestone note: {r.stderr.strip() or 'may already exist'}")
 
 
 def main() -> int:
