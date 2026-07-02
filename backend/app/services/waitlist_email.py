@@ -1,5 +1,7 @@
 import logging
-from typing import Optional
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import httpx
 
@@ -8,10 +10,45 @@ from app.core.config import settings
 logger = logging.getLogger("neuron-os")
 
 
-def _send_resend(to: str, subject: str, html: str) -> None:
+def _smtp_config():
+    user = (settings.SMTP_USER or "").strip()
+    password = (settings.SMTP_PASSWORD or "").strip()
+    if not user or not password:
+        return None
+
+    host = (settings.SMTP_HOST or "").strip()
+    if not host and user.endswith("@gmail.com"):
+        host = "smtp.gmail.com"
+    if not host:
+        return None
+
+    port = settings.SMTP_PORT or 587
+    from_addr = (settings.SMTP_FROM or "").strip() or f"Neuron <{user}>"
+    return host, port, user, password, from_addr
+
+
+def _send_smtp(to: str, subject: str, html: str) -> bool:
+    config = _smtp_config()
+    if not config:
+        return False
+
+    host, port, user, password, from_addr = config
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = from_addr
+    msg["To"] = to
+    msg.attach(MIMEText(html, "html"))
+
+    with smtplib.SMTP(host, port, timeout=15) as server:
+        server.starttls()
+        server.login(user, password)
+        server.sendmail(user, [to], msg.as_string())
+    return True
+
+
+def _send_resend(to: str, subject: str, html: str) -> bool:
     if not settings.RESEND_API_KEY:
-        logger.info("RESEND simulation → %s | %s", to, subject)
-        return
+        return False
     httpx.post(
         "https://api.resend.com/emails",
         headers={
@@ -26,6 +63,15 @@ def _send_resend(to: str, subject: str, html: str) -> None:
         },
         timeout=15.0,
     ).raise_for_status()
+    return True
+
+
+def _send_email(to: str, subject: str, html: str) -> None:
+    if _send_smtp(to, subject, html):
+        return
+    if _send_resend(to, subject, html):
+        return
+    logger.info("EMAIL simulation (set SMTP_USER + SMTP_PASSWORD) → %s | %s", to, subject)
 
 
 def send_welcome_email(email: str, position: int) -> None:
@@ -42,7 +88,7 @@ No spam, no newsletters — we'll only email you again when Neuron is ready for 
 <div style="margin-top:28px;padding-top:20px;border-top:1px solid #27272a;font-size:11px;color:#71717a">
 — The Neuron team
 </div></div></body></html>"""
-    _send_resend(email, "You're on the Neuron waitlist — thank you!", html)
+    _send_email(email, "You're on the Neuron waitlist — thank you!", html)
 
 
 def send_beta_invite(email: str) -> None:
@@ -53,7 +99,7 @@ def send_beta_invite(email: str) -> None:
 <p style="color:#d4d4d8;font-size:13px">You are invited to the Neuron private beta.</p>
 <a href="{url}" style="display:inline-block;background:#fff;color:#000;padding:10px 20px;border-radius:4px;text-decoration:none;font-size:12px;margin-top:16px">Access Private Beta →</a>
 </div></body></html>"""
-    _send_resend(email, "Your Neuron Beta Invitation", html)
+    _send_email(email, "Your Neuron Beta Invitation", html)
 
 
 def send_launch_invite(email: str) -> None:
@@ -64,4 +110,4 @@ def send_launch_invite(email: str) -> None:
 <p style="color:#d4d4d8;font-size:13px">Neuron is ready. Thank you for believing in the project early.</p>
 <a href="{url}" style="display:inline-block;background:#fff;color:#000;padding:10px 20px;border-radius:4px;text-decoration:none;font-size:12px;margin-top:16px">Launch Neuron →</a>
 </div></body></html>"""
-    _send_resend(email, "Neuron is ready.", html)
+    _send_email(email, "Neuron is ready.", html)

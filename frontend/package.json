@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "nodemailer": "^7.0.3",
     "@vercel/blob": "^2.3.0",
     "@supabase/supabase-js": "^2.110.0",
     "framer-motion": "^12.40.0",
@@ -19,6 +20,7 @@
     "resend": "^6.16.0"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

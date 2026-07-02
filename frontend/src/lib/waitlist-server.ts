@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { sendEmail } from "@/lib/send-email";
 
 export interface WaitlistEntry {
   id: number;
@@ -146,18 +146,7 @@ export async function adminAction(
 }
 
 async function sendResend(to: string, subject: string, html: string): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.log("RESEND simulation →", to, subject);
-    return;
-  }
-  const resend = new Resend(apiKey);
-  await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "Neuron <onboarding@resend.dev>",
-    to,
-    subject,
-    html,
-  });
+  await sendEmail(to, subject, html);
 }
 
 export async function sendWelcomeEmail(email: string, position: number): Promise<void> {
