@@ -28,6 +28,9 @@ services:
       - JWT_SECRET=super-secret-neuron-key-change-in-production
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - WAITLIST_ADMIN_PASSWORD=${WAITLIST_ADMIN_PASSWORD:-neuron_admin_secret}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - PUBLIC_APP_URL=http://localhost:3000
     ports:
       - "8000:8000"
     depends_on:

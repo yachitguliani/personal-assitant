@@ -6,8 +6,8 @@ import random
 
 from app.core.config import settings
 from app.core.database import engine, Base, get_db
-from app.api import auth, chat, memory, metrics, life_goals, burnout
-from app.models import life_metrics, goals, burnout_signal  # noqa: F401 — register ORM tables
+from app.api import auth, chat, memory, metrics, life_goals, burnout, waitlist
+from app.models import life_metrics, goals, burnout_signal, waitlist_entry  # noqa: F401
 
 # Create database tables automatically
 Base.metadata.create_all(bind=engine)
@@ -22,6 +22,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,6 +35,7 @@ app.include_router(memory.router, prefix=settings.API_V1_STR)
 app.include_router(metrics.router, prefix=settings.API_V1_STR)
 app.include_router(life_goals.router, prefix=settings.API_V1_STR)
 app.include_router(burnout.router, prefix=settings.API_V1_STR)
+app.include_router(waitlist.router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def read_root():

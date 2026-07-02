@@ -9,6 +9,7 @@ from app.api.auth import get_current_user
 from app.core.database import get_db
 from app.models.goals import Goal
 from app.models.user import User
+from app.services.memory_service import MemoryService
 
 router = APIRouter(prefix="/goals", tags=["life-goals"])
 
@@ -172,9 +173,20 @@ def checkin_goal(
     db: Session = Depends(get_db),
 ):
     goal = _get_user_goal(db, current_user.id, goal_id)
+    was_complete = goal.progress >= 100
     goal.progress = payload.progress
     if goal.progress >= 100:
         goal.status = "completed"
     db.commit()
     db.refresh(goal)
+
+    if goal.progress >= 100 and not was_complete:
+        MemoryService.add_memory(
+            db=db,
+            user_id=current_user.id,
+            text=f"Completed life goal: {goal.title}",
+            category="episodic",
+            tags_list=["life-goal", goal.category],
+        )
+
     return _serialize_goal(goal)

@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 
+    # Waitlist
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "Neuron <onboarding@resend.dev>")
+    WAITLIST_ADMIN_PASSWORD: str = os.getenv("WAITLIST_ADMIN_PASSWORD", "neuron_admin_secret")
+    PUBLIC_APP_URL: str = os.getenv("PUBLIC_APP_URL", "http://localhost:3000")
+
     # Local fallback parameters
     EMBEDDING_MODEL: str = "text-embedding-3-small"
 

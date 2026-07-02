@@ -48,7 +48,7 @@ function WaitlistContent() {
     setIsSubmitting(true);
     try {
       const isGithub = searchParams?.get("ref") === "github";
-      const res = await fetch("/api/waitlist", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api"}/waitlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: targetEmail, github_source: isGithub }),

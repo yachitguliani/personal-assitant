@@ -1,0 +1,50 @@
+# NEURON OS — Render.com Blueprint (one-click deploy)
+# https://render.com/deploy?repo=https://github.com/yachitguliani/personal-assitant
+
+databases:
+  - name: neuron-db
+    plan: free
+    databaseName: neuron
+    user: neuron
+
+services:
+  - type: web
+    name: neuron-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: neuron-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WAITLIST_ADMIN_PASSWORD
+        generateValue: true
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: Neuron <onboarding@resend.dev>
+      - key: PUBLIC_APP_URL
+        fromService:
+          type: web
+          name: neuron-web
+          property: host
+          transform: "https://${host}"
+
+  - type: web
+    name: neuron-web
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: neuron-api
+          property: host
+          transform: "https://${host}/api"

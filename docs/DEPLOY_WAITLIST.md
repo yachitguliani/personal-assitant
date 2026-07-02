@@ -1,77 +1,45 @@
-# Deploy NEURON OS (Public Waitlist)
+# Deploy NEURON OS (public waitlist)
 
-The waitlist lives in the **Next.js frontend** (`frontend/`). It needs Vercel (or similar) because `/api/waitlist` uses serverless API routes.
+## Fastest: One-click Render deploy
 
-## One-time setup (≈10 minutes)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/yachitguliani/personal-assitant)
 
-### 1. Supabase database
+1. Click the button above (sign in with GitHub once)
+2. Render reads `render.yaml` and creates **database + API + frontend**
+3. Optional: add `RESEND_API_KEY` in the Render dashboard for welcome emails
+4. Your live URLs will be:
+   - `https://neuron-web.onrender.com/waitlist` — public signup
+   - `https://neuron-web.onrender.com/waitlist/admin` — admin console
 
-1. Create a project at [supabase.com](https://supabase.com)
-2. Open **SQL Editor** → paste contents of [`waitlist.sql`](../waitlist.sql) → Run
-3. Copy **Project URL** and **service_role** key (Settings → API)
-
-### 2. Resend (welcome emails)
-
-1. Create account at [resend.com](https://resend.com)
-2. Add and verify your sending domain (or use Resend sandbox for testing)
-3. Copy API key
-
-### 3. Deploy to Vercel
-
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import repo: `yachitguliani/personal-assitant`
-3. Set **Root Directory** → `frontend`
-4. Add **Environment Variables**:
-
-| Variable | Value |
-|----------|--------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role key |
-| `RESEND_API_KEY` | Resend API key |
-| `WAITLIST_ADMIN_PASSWORD` | Strong password for `/waitlist/admin` |
-
-5. Click **Deploy**
-
-Your public URLs:
-- **Waitlist:** `https://YOUR-PROJECT.vercel.app/waitlist`
-- **Admin:** `https://YOUR-PROJECT.vercel.app/waitlist/admin`
-
-### 4. Update README badge (optional)
-
-Replace `personal-assitant.vercel.app` in README with your real Vercel domain.
-
----
-
-## CLI deploy (after `vercel login`)
-
-```bash
-cd frontend
-vercel --prod
-```
+Share the waitlist link anywhere — no repo access needed.
 
 ---
 
 ## Local development
 
 ```bash
-cd frontend
-cp ../.env.example .env.local
-# Fill in Supabase + Resend keys (or leave empty for in-memory mock)
-npm run dev
+docker-compose up --build
 ```
 
-Open http://localhost:3000/waitlist
+- Waitlist: http://localhost:3000/waitlist
+- Admin: http://localhost:3000/waitlist/admin (password: `neuron_admin_secret` by default)
+- API: http://localhost:8000/docs
 
-Without Supabase keys, signups use an **in-memory mock** (resets on server restart).
+Waitlist data persists in Postgres (Docker) or SQLite (manual backend run).
 
 ---
 
-## GitHub contributors
+## Environment variables (backend)
 
-Share this link — no repo clone needed:
+| Variable | Purpose |
+|----------|---------|
+| `WAITLIST_ADMIN_PASSWORD` | Admin console auth |
+| `RESEND_API_KEY` | Welcome / invite emails (optional) |
+| `RESEND_FROM_EMAIL` | Sender address for Resend |
+| `PUBLIC_APP_URL` | Link in invite emails |
 
-```
-https://YOUR-PROJECT.vercel.app/waitlist?ref=github
-```
+---
 
-The `?ref=github` flag tags signups from GitHub in the admin dashboard.
+## Optional: Supabase SQL
+
+If you prefer Supabase over Render Postgres, run `waitlist.sql` in Supabase SQL Editor. The app now uses the **FastAPI backend** waitlist table (`waitlist_entries`) by default.
