@@ -30,6 +30,10 @@ interface NeuronOsContextValue {
   setActivePanel: (panel: "chat" | "files") => void;
   voiceEnabled: boolean;
   setVoiceEnabled: (v: boolean) => void;
+  activeConvId: number | null;
+  setActiveConvId: (id: number | null) => void;
+  orbMessage: string;
+  setOrbMessage: (msg: string, autoClearMs?: number) => void;
 }
 
 const NeuronOsContext = createContext<NeuronOsContextValue | null>(null);
@@ -46,7 +50,20 @@ export function NeuronOsProvider({ children }: { children: React.ReactNode }) {
   const [memoryActivity, setMemoryActivity] = useState(42);
   const [activePanel, setActivePanel] = useState<"chat" | "files">("chat");
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [activeConvId, setActiveConvId] = useState<number | null>(null);
+  const [orbMessage, setOrbMessageState] = useState("");
   const memoryDecayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const orbMessageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const setOrbMessage = useCallback((msg: string, autoClearMs = 3000) => {
+    setOrbMessageState(msg);
+    if (orbMessageTimeoutRef.current) clearTimeout(orbMessageTimeoutRef.current);
+    if (autoClearMs > 0) {
+      orbMessageTimeoutRef.current = setTimeout(() => {
+        setOrbMessageState("");
+      }, autoClearMs);
+    }
+  }, []);
 
   const addSystemLog = useCallback((msg: string) => {
     setSystemLogs((prev) => [...prev.slice(-19), `[${new Date().toLocaleTimeString()}] ${msg}`]);
@@ -88,6 +105,7 @@ export function NeuronOsProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
     return () => {
       if (memoryDecayRef.current) clearInterval(memoryDecayRef.current);
+      if (orbMessageTimeoutRef.current) clearTimeout(orbMessageTimeoutRef.current);
     };
   }, []);
 
@@ -117,6 +135,10 @@ export function NeuronOsProvider({ children }: { children: React.ReactNode }) {
         setActivePanel,
         voiceEnabled,
         setVoiceEnabled,
+        activeConvId,
+        setActiveConvId,
+        orbMessage,
+        setOrbMessage,
       }}
     >
       {children}

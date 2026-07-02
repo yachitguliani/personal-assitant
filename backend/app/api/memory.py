@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from sqlalchemy import func
 
@@ -17,6 +17,11 @@ class MemoryCreate(BaseModel):
     text: str
     category: Optional[str] = "semantic"
     tags: Optional[List[str]] = []
+
+class MemoryUpdate(BaseModel):
+    text: Optional[str] = Field(None, min_length=1)
+    category: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 class MemoryResponse(BaseModel):
     id: int
@@ -104,6 +109,64 @@ def delete_memory(
     db.delete(mem)
     db.commit()
     return
+
+@router.patch("/{memory_id}", response_model=MemoryResponse)
+def update_memory(
+    memory_id: int,
+    payload: MemoryUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    mem = db.query(MemoryNode).filter(
+        MemoryNode.id == memory_id,
+        MemoryNode.user_id == current_user.id
+    ).first()
+    if not mem:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Memory not found"
+        )
+    
+    data = payload.model_dump(exclude_unset=True)
+    text_changed = False
+    
+    if "text" in data:
+        new_text = data["text"].strip()
+        if not new_text:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Text cannot be empty"
+            )
+        if mem.text != new_text:
+            mem.text = new_text
+            text_changed = True
+            
+    if "category" in data:
+        if data["category"] not in {"semantic", "episodic", "procedural"}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid category"
+            )
+        mem.category = data["category"]
+        
+    if "tags" in data:
+        mem.tags = ",".join(data["tags"])
+        
+    if text_changed:
+        vector = MemoryService.get_embedding(mem.text)
+        mem.set_embedding(vector)
+        
+    db.add(mem)
+    db.commit()
+    db.refresh(mem)
+    
+    return {
+        "id": mem.id,
+        "text": mem.text,
+        "category": mem.category,
+        "tags": [t.strip() for t in mem.tags.split(",") if t.strip()] if mem.tags else [],
+        "created_at": mem.created_at.isoformat()
+    }
 
 @router.get("/stats", response_model=MemoryStatsResponse)
 def get_memory_stats(

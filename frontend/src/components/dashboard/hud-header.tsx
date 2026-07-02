@@ -7,6 +7,7 @@ import { clearAuthToken } from "@/utils/api";
 import { useNeuronOs } from "@/context/neuron-os-context";
 import { WeeklyWarningBanner } from "@/components/dashboard/weekly-warning-banner";
 import { useBurnoutRisk } from "@/hooks/use-burnout-risk";
+import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
 
 interface HudHeaderProps {
   userName?: string;
@@ -21,6 +22,7 @@ export function HudHeader({ userName, onCommandPalette, activeRoute }: HudHeader
   const { activePanel, setActivePanel, orbState } = useNeuronOs();
   const { risk } = useBurnoutRisk();
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const orbLabel = {
     idle: "STANDBY",
@@ -122,7 +124,7 @@ export function HudHeader({ userName, onCommandPalette, activeRoute }: HudHeader
           </nav>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4 relative">
           {isMainDashboard && (
             <button
               onClick={onCommandPalette}
@@ -133,9 +135,13 @@ export function HudHeader({ userName, onCommandPalette, activeRoute }: HudHeader
             </button>
           )}
 
-          <div className="hidden md:flex flex-col text-right font-mono">
+          <div
+            onClick={() => setProfileOpen(!profileOpen)}
+            className="hidden md:flex flex-col text-right font-mono cursor-pointer select-none px-2 py-1 rounded border border-transparent hover:border-white/5 hover:bg-white/5 transition-all"
+            title="Operator Credentials"
+          >
             <span className="text-[8px] text-white/40">OPERATOR</span>
-            <span className="text-[10px] text-white/80 font-bold">{userName || "Agent"}</span>
+            <span className="text-[10px] text-cyber-cyan font-bold">{userName || "Agent"}</span>
           </div>
 
           <button
@@ -145,6 +151,15 @@ export function HudHeader({ userName, onCommandPalette, activeRoute }: HudHeader
           >
             <LogOut size={14} />
           </button>
+
+          <ProfileDropdown
+            isOpen={profileOpen}
+            onClose={() => setProfileOpen(false)}
+            onLogout={() => {
+              clearAuthToken();
+              router.push("/login");
+            }}
+          />
         </div>
       </header>
     </>

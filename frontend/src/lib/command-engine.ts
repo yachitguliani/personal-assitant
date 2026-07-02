@@ -189,9 +189,12 @@ export function executeCommand(input: string, ctx: CommandContext): CommandResul
 }
 
 export const COMMAND_PALETTE_ITEMS = [
-  { id: "new-chat", label: "New Conversation", shortcut: "Ctrl+N", category: "Chat" },
+  { id: "new-chat", label: "New Chat", shortcut: "Ctrl+N", category: "Chat" },
+  { id: "search-memory", label: "Search Memory", shortcut: "Ctrl+S", category: "Memory" },
+  { id: "open-life-os", label: "Open Life OS", shortcut: "Ctrl+L", category: "Navigation" },
+  { id: "system-status", label: "System Status", category: "System" },
+  { id: "clear-terminal", label: "Clear Terminal", shortcut: "Ctrl+Shift+X", category: "System" },
   { id: "command-help", label: "Show Commands", shortcut: "?", category: "System" },
-  { id: "status", label: "System Status", category: "System" },
   { id: "scan", label: "Neural System Scan", category: "System" },
   { id: "sync", label: "Sync Memory Bank", category: "Memory" },
   { id: "ls", label: "List Files", category: "Files" },

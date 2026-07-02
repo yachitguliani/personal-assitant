@@ -14,6 +14,7 @@ import { FileExplorer } from "@/components/dashboard/file-explorer";
 import { TelemetryFeed } from "@/components/dashboard/telemetry-feed";
 import { ProcessTerminal } from "@/components/dashboard/process-terminal";
 import { MemoryIndicator } from "@/components/dashboard/memory-indicator";
+import { MemorySearchPanel } from "@/components/dashboard/memory-search-panel";
 import { SystemStatus } from "@/components/system-status";
 import { VectorViz } from "@/components/vector-viz";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -30,6 +31,7 @@ function DashboardInner() {
     telemetryEvents, processLogs, advanceProcess, systemLogs,
     memoryActivity, activePanel, setActivePanel,
     addSystemLog, addProcessLog, triggerMemoryPulse,
+    activeConvId, setActiveConvId, clearProcessLogs,
   } = useNeuronOs();
 
   const [user, setUser] = useState<{ full_name?: string } | null>(null);
@@ -57,11 +59,14 @@ function DashboardInner() {
         setCommandPaletteOpen(true);
         break;
       case "command-help":
-      case "status":
       case "scan":
       case "sync":
       case "ls":
         addProcessLog(id === "command-help" ? "help" : id);
+        triggerMemoryPulse();
+        break;
+      case "system-status":
+        addProcessLog("status");
         triggerMemoryPulse();
         break;
       case "mkdir":
@@ -73,12 +78,28 @@ function DashboardInner() {
         addSystemLog("Navigate to Files panel to create files");
         break;
       case "new-chat":
-        addSystemLog("New conversation initialized");
+        setActiveConvId(null);
+        setActivePanel("chat");
+        addSystemLog("New chat initialized");
+        break;
+      case "search-memory":
+        setTimeout(() => {
+          document.getElementById("memory-search-input")?.focus();
+        }, 100);
+        addSystemLog("Memory search panel focused");
+        break;
+      case "open-life-os":
+        router.push("/dashboard/life");
+        addSystemLog("Redirecting to Life OS panel");
+        break;
+      case "clear-terminal":
+        clearProcessLogs();
+        addSystemLog("Terminal logs cleared");
         break;
       default:
         break;
     }
-  }, [activePanel, setActivePanel, setCommandPaletteOpen, addProcessLog, addSystemLog, triggerMemoryPulse]);
+  }, [activePanel, setActivePanel, setCommandPaletteOpen, addProcessLog, addSystemLog, triggerMemoryPulse, setActiveConvId, router, clearProcessLogs]);
 
   if (!bootComplete) {
     return <BootSequence userName={user?.full_name} onComplete={() => setBootComplete(true)} />;
@@ -161,6 +182,7 @@ function DashboardInner() {
         {/* Right panel — telemetry & intelligence */}
         <aside className="w-full lg:w-72 border-l border-white/5 bg-black/35 flex flex-col overflow-y-auto p-3 gap-4 shrink-0 max-h-[40vh] lg:max-h-none">
           <MemoryIndicator activity={memoryActivity} />
+          <MemorySearchPanel />
 
           <div>
             <span className="text-[9px] font-mono uppercase tracking-widest text-white/30 mb-2 block flex items-center gap-1">

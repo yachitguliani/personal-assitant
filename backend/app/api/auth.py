@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from datetime import datetime
 
 from app.core.database import get_db
 from app.core.config import settings
@@ -33,6 +34,7 @@ class UserResponse(BaseModel):
     email: str
     full_name: Optional[str] = None
     is_active: bool
+    created_at: datetime
 
     class Config:
         from_attributes = True

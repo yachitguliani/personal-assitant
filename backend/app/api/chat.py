@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 from app.core.database import get_db
@@ -33,6 +33,9 @@ class ConversationResponse(BaseModel):
 
 class ConversationCreate(BaseModel):
     title: Optional[str] = "New Conversation"
+
+class ConversationUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=100)
 
 class MessageCreate(BaseModel):
     content: str
@@ -108,6 +111,53 @@ def delete_conversation(
     db.delete(conv)
     db.commit()
     return
+
+@router.patch("/conversations/{conversation_id}", response_model=ConversationResponse)
+def update_conversation(
+    conversation_id: int,
+    payload: ConversationUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    conv = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == current_user.id
+    ).first()
+    if not conv:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    
+    data = payload.model_dump(exclude_unset=True)
+    if "title" in data:
+        new_title = data["title"].strip()
+        if not new_title:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Title cannot be empty"
+            )
+        conv.title = new_title
+        db.add(conv)
+        db.commit()
+        db.refresh(conv)
+
+    # Structure message items manually to ensure clean ISO strings
+    messages_data = [
+        MessageResponse(
+            id=m.id,
+            sender=m.sender,
+            content=m.content,
+            created_at=m.created_at.isoformat()
+        ) for m in conv.messages
+    ]
+
+    return {
+        "id": conv.id,
+        "title": conv.title,
+        "created_at": conv.created_at.isoformat(),
+        "messages": messages_data
+    }
 
 @router.post("/conversations/{conversation_id}/stream")
 def stream_chat_response(

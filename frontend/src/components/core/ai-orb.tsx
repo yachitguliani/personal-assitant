@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { motion } from "framer-motion";
-import type { OrbState } from "@/context/neuron-os-context";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNeuronOs, type OrbState } from "@/context/neuron-os-context";
 
 interface AiOrbProps {
   state: OrbState;
@@ -31,6 +31,7 @@ const STATE_LABELS: Record<OrbState, string> = {
 };
 
 export function AiOrb({ state, size = 180, className = "", audioLevel = 0, awakenProgress = 1 }: AiOrbProps) {
+  const { orbMessage } = useNeuronOs();
   const colors = STATE_COLORS[state];
   const isActive = state !== "idle" && state !== "awakening";
   const isAwakening = state === "awakening";
@@ -214,13 +215,27 @@ export function AiOrb({ state, size = 180, className = "", audioLevel = 0, awake
       </motion.div>
 
       <motion.div
-        className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap"
+        className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap flex flex-col items-center gap-1.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: effectiveAwaken }}
       >
         <span className="text-[8px] font-mono tracking-[0.3em] text-cyber-cyan/70 uppercase">
           {STATE_LABELS[state]}
         </span>
+        <AnimatePresence mode="wait">
+          {orbMessage && (
+            <motion.span
+              key={orbMessage}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="text-[8px] font-mono text-white/50 tracking-wider uppercase bg-black/40 border border-white/5 rounded px-2 py-0.5 shadow-sm"
+            >
+              {orbMessage}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
