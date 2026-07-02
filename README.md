@@ -4,6 +4,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Stack: Next.js + FastAPI + Postgres](https://img.shields.io/badge/Stack-Next.js%20%7C%20FastAPI%20%7C%20Postgres-blue.svg)](#)
 
+---
+
+# 🧠 Neuron
+
+> Building something worth waiting for.
+
+If you found this repository before launch, you're early.
+
+Join the waitlist and you'll be among the first people invited when Neuron is ready.
+
+<p align="center">
+<a href="https://neuron.ai/waitlist">
+<img src="https://img.shields.io/badge/Join-Early%20Access-black?style=for-the-badge">
+</a>
+</p>
+
+---
+
 > **Build Philosophy:** *"Computers adapted humans to software. NEURON adapts software to humans."*
 
 NEURON OS is an open-source, AI-powered personal operating system inspired by cinematic sci-fi interfaces (like Jarvis and Iron Man's HUD). It is designed to act as a personalized intelligence layer for human life, functioning as a second brain, an AI chief-of-staff, and a proactive life assistant.
