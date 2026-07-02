@@ -15,10 +15,12 @@ If you found this repository before launch, you're early.
 Join the waitlist and you'll be among the first people invited when Neuron is ready.
 
 <p align="center">
-<a href="https://neuron.ai/waitlist">
+<a href="https://personal-assitant.vercel.app/waitlist">
 <img src="https://img.shields.io/badge/Join-Early%20Access-black?style=for-the-badge">
 </a>
 </p>
+
+**Public waitlist:** [personal-assitant.vercel.app/waitlist](https://personal-assitant.vercel.app/waitlist) — anyone can sign up, no repo access needed.
 
 ---
 
