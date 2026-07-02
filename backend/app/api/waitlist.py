@@ -63,7 +63,7 @@ def join_waitlist(payload: WaitlistJoin, db: Session = Depends(get_db)):
     db.refresh(entry)
 
     try:
-        send_welcome_email(email)
+        send_welcome_email(email, entry.position)
     except Exception as exc:
         logger.warning("Welcome email failed for %s: %s", email, exc)
 

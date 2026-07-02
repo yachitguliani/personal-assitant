@@ -19,6 +19,7 @@ function WaitlistContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [joined, setJoined] = useState(false);
+  const [alreadyJoined, setAlreadyJoined] = useState(false);
   const [position, setPosition] = useState<number | null>(null);
 
   // Auto-focus the input on mount
@@ -61,6 +62,7 @@ function WaitlistContent() {
       }
 
       setPosition(data.position);
+      setAlreadyJoined(Boolean(data.exists));
       setJoined(true);
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to join waitlist. Please try again.");
@@ -167,6 +169,11 @@ function WaitlistContent() {
               <div className="text-sm text-zinc-400 font-normal leading-relaxed flex flex-col gap-2 max-w-lg">
                 <p>Welcome aboard.</p>
                 <p>You&apos;re now one of the earliest people following Neuron.</p>
+                {!alreadyJoined && (
+                  <p className="text-zinc-500">
+                    Check your inbox — we sent you a thank-you confirmation with your waitlist position.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -183,7 +190,9 @@ function WaitlistContent() {
             )}
 
             <p className="text-xs text-zinc-500 font-mono leading-relaxed mt-2">
-              We&apos;ll contact you when it&apos;s ready.
+              {alreadyJoined
+                ? "You're already on the list — we'll be in touch when it's ready."
+                : "We'll contact you when it's ready."}
             </p>
           </motion.div>
         )}

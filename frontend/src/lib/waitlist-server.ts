@@ -87,7 +87,7 @@ export async function joinWaitlist(
     github_source: githubSource,
   });
   await writeStore(store);
-  await sendWelcomeEmail(normalized);
+  await sendWelcomeEmail(normalized, position);
   return { position, exists: false };
 }
 
@@ -160,16 +160,21 @@ async function sendResend(to: string, subject: string, html: string): Promise<vo
   });
 }
 
-export async function sendWelcomeEmail(email: string): Promise<void> {
+export async function sendWelcomeEmail(email: string, position: number): Promise<void> {
   const html = `<!DOCTYPE html><html><body style="background:#000;color:#e4e4e7;font-family:monospace;padding:40px">
 <div style="max-width:500px;margin:0 auto">
 <div style="color:#71717a;font-size:12px;margin-bottom:24px">~/neuron/welcome.txt</div>
 <div style="font-weight:600;font-size:16px;margin-bottom:20px;color:#fff">Neuron</div>
 <div style="font-size:13px;color:#d4d4d8;line-height:1.6">
-You're officially on the waitlist.<br><br>
-You won't receive marketing emails — only one email when Neuron is ready for earliest users.
+Thank you for joining the Neuron waitlist.<br><br>
+You're officially in — your position is <strong style="color:#fff">#${position}</strong>.<br><br>
+We're building something worth waiting for, and we're grateful you're here early.<br><br>
+No spam, no newsletters — we'll only email you again when Neuron is ready for you.
+</div>
+<div style="margin-top:28px;padding-top:20px;border-top:1px solid #27272a;font-size:11px;color:#71717a">
+— The Neuron team
 </div></div></body></html>`;
-  await sendResend(email, "Welcome to the Neuron Waitlist", html);
+  await sendResend(email, "You're on the Neuron waitlist — thank you!", html);
 }
 
 async function sendBetaInvite(email: string): Promise<void> {
