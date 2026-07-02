@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /waitlist$
+Disallow: /waitlist/admin
+Disallow: /dashboard
+Disallow: /login

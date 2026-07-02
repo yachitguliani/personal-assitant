@@ -42,6 +42,12 @@ services:
     dockerContext: ./frontend
     plan: free
     envVars:
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: neuron-api
+          property: host
+          transform: "https://${host}"
       - key: NEXT_PUBLIC_API_URL
         fromService:
           type: web

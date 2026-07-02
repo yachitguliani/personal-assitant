@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { IBM_Plex_Mono } from "next/font/google";
 import { Terminal } from "lucide-react";
+import { WAITLIST_API } from "@/lib/waitlist-api";
 
 const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
@@ -48,7 +49,7 @@ function WaitlistContent() {
     setIsSubmitting(true);
     try {
       const isGithub = searchParams?.get("ref") === "github";
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api"}/waitlist`, {
+      const res = await fetch(WAITLIST_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: targetEmail, github_source: isGithub }),

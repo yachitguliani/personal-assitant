@@ -14,15 +14,15 @@ If you found this repository before launch, you're early.
 
 Join the waitlist and you'll be among the first people invited when Neuron is ready.
 
+**Live waitlist:** [frontend-mu-sand-39.vercel.app/waitlist](https://frontend-mu-sand-39.vercel.app/waitlist)
+
 <p align="center">
-<a href="https://render.com/deploy?repo=https://github.com/yachitguliani/personal-assitant">
-<img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
+<a href="https://frontend-mu-sand-39.vercel.app/waitlist">
+<img src="https://img.shields.io/badge/Join%20Waitlist-Live-00ff88?style=for-the-badge" alt="Join Waitlist">
 </a>
 </p>
 
-**Run locally:** `docker-compose up` → open `/waitlist` at http://localhost:3000/waitlist
-
-**Deploy publicly:** One-click [Deploy to Render](https://render.com/deploy?repo=https://github.com/yachitguliani/personal-assitant) — see [`docs/DEPLOY_WAITLIST.md`](docs/DEPLOY_WAITLIST.md)
+For full-stack deploy (API + Postgres on Render), see [`docs/DEPLOY_WAITLIST.md`](docs/DEPLOY_WAITLIST.md).
 
 ---
 

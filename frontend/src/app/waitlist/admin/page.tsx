@@ -11,7 +11,7 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { WAITLIST_API } from "@/lib/waitlist-api";
 
 interface User {
   id: string;
@@ -46,7 +46,7 @@ export default function AdminPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/waitlist/admin?q=test`, {
+      const res = await fetch(`${WAITLIST_API}/admin?q=test`, {
         headers: { "X-Admin-Password": password },
       });
 
@@ -71,7 +71,7 @@ export default function AdminPage() {
   const fetchDashboardData = async (key: string, search = searchQuery) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/waitlist/admin?q=${encodeURIComponent(search)}`, {
+      const res = await fetch(`${WAITLIST_API}/admin?q=${encodeURIComponent(search)}`, {
         headers: { "X-Admin-Password": key },
       });
       if (!res.ok) throw new Error();
@@ -99,7 +99,7 @@ export default function AdminPage() {
   const handleExportCSV = async () => {
     const key = localStorage.getItem("waitlist_admin_key") || "";
     try {
-      const res = await fetch(`${API_BASE}/waitlist/admin?export=csv&q=${encodeURIComponent(searchQuery)}`, {
+      const res = await fetch(`${WAITLIST_API}/admin?export=csv&q=${encodeURIComponent(searchQuery)}`, {
         headers: { "X-Admin-Password": key },
       });
       if (!res.ok) throw new Error();
@@ -124,7 +124,7 @@ export default function AdminPage() {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/waitlist/admin`, {
+      const res = await fetch(`${WAITLIST_API}/admin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

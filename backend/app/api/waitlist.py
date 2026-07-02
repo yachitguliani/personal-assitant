@@ -2,6 +2,8 @@ import csv
 import io
 from typing import List, Optional
 
+import logging
+
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, EmailStr, Field
@@ -12,6 +14,8 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.models.waitlist_entry import WaitlistEntry
 from app.services.waitlist_email import send_beta_invite, send_launch_invite, send_welcome_email
+
+logger = logging.getLogger("neuron-os")
 
 router = APIRouter(prefix="/waitlist", tags=["waitlist"])
 
@@ -60,8 +64,8 @@ def join_waitlist(payload: WaitlistJoin, db: Session = Depends(get_db)):
 
     try:
         send_welcome_email(email)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Welcome email failed for %s: %s", email, exc)
 
     return {"position": entry.position, "exists": False}
 
